@@ -1,2 +1,2 @@
 # Genetic-Algorithm-MATLAB
-MATLAB implementation of a genetic algorithm
+GA_Version_1 -- Demonstrates solution to a two variable design variable. Useful as a HW for a graduate level course or developing more robust Genetic Algorithms
