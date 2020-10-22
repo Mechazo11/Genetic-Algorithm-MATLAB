@@ -163,37 +163,53 @@ function X22 = find_mates(X_current, cumu_prob, comp_rand)
     % Note, both cumu_prob and comp_rand are row vectors
     % The are needed to be flipped to column vector
     
-    X11 = [X_current, (cumu_prob).', (comp_rand).'];
-    X22 = zeros(6,2);
+    X11 = [X_current, (cumu_prob).', (comp_rand).']; % Big matrix
+    NX = size(X11,1); % Number of rows i.e number of candiates
+    X22 = zeros(NX,2);
     num_to_iter = size(X11,1);
 
     % Scratch pad variable
     row_prob = 0;
     rand_prob = 0;
     test_idx = 1;
+    cnt = 1;
 
     % Counter to keep track of how many counts we did
     for ii = 1: num_to_iter
-        cnt = 1;
         row_prob = X11(ii,3); % Choose the cumu_probability for this candidate
         %fprintf("\nCumu prob now --> %f\n",row_prob);
-        %fprintf("------------------------");
-        % Look thru each random probability sequentially
+        %fprintf("------------------------\n");
+        
+        % Look thru each "random" probability sequentially
         for kk = 1: num_to_iter
             rand_prob = X11(kk,4); % Get probability for position at kk
             %fprintf("Rand prob now --> %f\n",rand_prob);
-            % Test if current cumu probability is greater than current value of
-            % random probability
+            %%%Test if current cumu probability is greater than current value of random probability
             if (row_prob >= rand_prob)
                 X22(kk,:) = X_current(ii,:);
+                % Debug print X_current
+                X22
                 X11(kk,4) = 1.1; % This will prevent this position random number to evaluated again in next round
-                %fprintf("\n");
+                
+                %fprintf("-----------------------------------------------------------\n");
                 %fprintf("Assigned G_%d position %d going to next candidate\n", ii,kk);
-                %fprintf("-----------------------------------------------------------");
+                %fprintf("-----------------------------------------------------------\n");
                 break % We stop the inner loop and move onto next candidate
             else
-                cnt = cnt + 1;
-                continue % Go to next candidate
+                cnt = cnt + 1; % Dummy to prevent error
+                if (cnt<num_to_iter)
+                    continue % Go to next random probability value
+                else
+                    % change actual probability value of this candidate to 1
+                    % Exceeded num_iter count
+                    % Reset cnt
+                    % reset kk
+                    % continue again
+                    row_prob = 0.99999;
+                    cnt = 1;
+                    kk = 1;
+                    continue
+                end
             end
         end
     end
